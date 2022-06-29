@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace LoginApp.DTOS
 {
@@ -10,5 +11,11 @@ namespace LoginApp.DTOS
         public string AccesToken { get; set; }
         [Required]
         public string RefreshToken { get; set; }
+        [Required]
+        public string Scopes { get; set; }
+        [Required]
+        public DateTime ExpiracionAccesToken { get; set; }
+        [Required]
+        public DateTime ExpiracionRefreshToken { get; set; }
     }
 }

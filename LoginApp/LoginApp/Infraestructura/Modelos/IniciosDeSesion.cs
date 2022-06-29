@@ -11,5 +11,9 @@ namespace LoginApp.Infraestructura.Modelos
         [Key]
         public string Email { get; set; }
         public string AccesToken { get; set; }
+        public string RefreshToken { get; set; }
+        public string Scope { get; set; }
+        public DateTime ExpiracionAccesToken { get; set; }
+        public DateTime ExpiracionRefreshToken { get; set; }
     }
 }

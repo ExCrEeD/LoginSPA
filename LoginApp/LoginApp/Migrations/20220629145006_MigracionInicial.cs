@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace LoginApp.Migrations
 {
@@ -10,8 +11,12 @@ namespace LoginApp.Migrations
                 name: "IniciosDeSesion",
                 columns: table => new
                 {
-                    Email = table.Column<string>(nullable: false),
-                    AccesToken = table.Column<string>(nullable: true)
+                    Email = table.Column<string>(unicode: false, nullable: false),
+                    AccesToken = table.Column<string>(unicode: false, nullable: true),
+                    RefreshToken = table.Column<string>(unicode: false, nullable: true),
+                    Scope = table.Column<string>(unicode: false, nullable: true),
+                    ExpiracionAccesToken = table.Column<DateTime>(nullable: false),
+                    ExpiracionRefreshToken = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
