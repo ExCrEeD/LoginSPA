@@ -8,18 +8,11 @@ import { msalConfig } from "./authConfig";
 import Rutas from "./Router";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-export const msalInstance = new PublicClientApplication(msalConfig);
-
-const accounts = msalInstance.getAllAccounts();
-
-if (accounts.length > 0) {
-  msalInstance.setActiveAccount(accounts[0]);
-}
 
 root.render(
-  <React.StrictMode>
+  <div>
     <Rutas />
-  </React.StrictMode>
+  </div>
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -12,7 +12,7 @@ import {msalInstance } from './InstanciaMSAL'
 //Todo:Pendiente ver por que no redireciona
 export default function CustomLinkExample() {
   return (
-    <BrowserRouter basename="/Ruta">
+    <BrowserRouter >
       <Switch>
         <Route exact path="/" >
           <App instance={msalInstance} />
