@@ -27,8 +27,8 @@ namespace LoginApp.Controllers
 
 
         [HttpPost]
-        [Route("GuardarTokenXOAUTH2")]
-        public IActionResult GuardarTokenXOAUTH2(DTOLoginXoauth2 loginXoauth2)
+        [Route("AlmacenarToken")]
+        public IActionResult AlmacenarToken(DTOLoginXoauth2 loginXoauth2)
         {
             servicioToken.AlmacenarToken(loginXoauth2);
             return Ok("Token almacenado correctamente");

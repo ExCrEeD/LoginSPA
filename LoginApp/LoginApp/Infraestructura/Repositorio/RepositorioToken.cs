@@ -1,5 +1,6 @@
 ﻿using LoginApp.DTOS;
 using LoginApp.Infraestructura.Modelos;
+using System;
 using System.Linq;
 
 namespace LoginApp.Infraestructura.Repositorio
@@ -18,14 +19,25 @@ namespace LoginApp.Infraestructura.Repositorio
         }
         public void AlmacenarToken(DTOLoginXoauth2 loginXoauth2)
         {
-            dbContext.IniciosDeSesion.Add(
-                  new IniciosDeSesion
-                  {
-                      AccesToken = loginXoauth2.AccesToken,
-                      Email = loginXoauth2.Email
-                  }
-             );
+            var inicioDeSesion = dbContext.IniciosDeSesion.FirstOrDefault(f=>f.Email == loginXoauth2.Email);
+
+            if (inicioDeSesion is null)
+                dbContext.IniciosDeSesion.Add(DeDTOAPersistencia(loginXoauth2));
+            else
+                dbContext.Entry(inicioDeSesion).CurrentValues.SetValues(DeDTOAPersistencia(loginXoauth2));
+
             dbContext.SaveChanges();
+
+            static IniciosDeSesion DeDTOAPersistencia(DTOLoginXoauth2 login) 
+             => new IniciosDeSesion
+                {
+                    AccesToken = login.AccesToken,
+                    Email = login.Email,
+                    ExpiracionAccesToken = login.ExpiracionAccesToken,
+                    RefreshToken = login.RefreshToken,
+                    Scope = login.Scopes,
+                    ExpiracionRefreshToken = DateTime.Now.AddDays(1)
+                };
         }
 
         public DTOLoginXoauth2 ConsultarToken(string email)
@@ -36,8 +48,9 @@ namespace LoginApp.Infraestructura.Repositorio
                 {
                     AccesToken = s.AccesToken,
                     Email = s.Email,
-                    RefreshToken = null
-
+                    RefreshToken = s.RefreshToken,
+                    Scopes = s.Scope,
+                    ExpiracionAccesToken = s.ExpiracionAccesToken
                 }).FirstOrDefault();
         }
     }

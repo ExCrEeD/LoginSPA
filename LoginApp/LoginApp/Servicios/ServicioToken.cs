@@ -33,7 +33,13 @@ namespace LoginApp
             this.configApp = Configuration.GetSection("ConfiguracionAPP").Get<ConfigApp>();
         }
 
-        public DTOLoginXoauth2 ConsultarToken(string email)=> repositorioToken.ConsultarToken(email);
+        public DTOLoginXoauth2 ConsultarToken(string email) {
+            var token = repositorioToken.ConsultarToken(email);
+            if (token is null)
+                throw new Exception($"No se encontro un token de acceso para el email {0}");
+            
+            return token;
+        }
 
         public void AlmacenarToken(DTOLoginXoauth2 loginXoauth2) => repositorioToken.AlmacenarToken(loginXoauth2);
 

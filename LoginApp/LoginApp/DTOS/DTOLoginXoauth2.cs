@@ -15,7 +15,5 @@ namespace LoginApp.DTOS
         public string Scopes { get; set; }
         [Required]
         public DateTime ExpiracionAccesToken { get; set; }
-        [Required]
-        public DateTime ExpiracionRefreshToken { get; set; }
     }
 }

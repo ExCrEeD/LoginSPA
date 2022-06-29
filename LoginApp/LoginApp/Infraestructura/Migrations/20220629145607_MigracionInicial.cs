@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace LoginApp.Migrations
+namespace LoginApp.Infraestructura.Migrations
 {
     public partial class MigracionInicial : Migration
     {
