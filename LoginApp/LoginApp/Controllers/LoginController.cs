@@ -15,7 +15,6 @@ namespace LoginApp.Controllers
             this.servicioToken = servicioToken;
         }
 
-
         [HttpGet]
         [Route("ObtenerConfiguracionAPP")]
         public IActionResult ObtenerConfiguracionAPP() => Ok(servicioToken.ObtenerConfiguracionAPP());
@@ -25,6 +24,10 @@ namespace LoginApp.Controllers
         [Route("ConsultarToken")]
         public IActionResult ConsultarToken(string email) => Ok(servicioToken.ConsultarToken(email));
 
+        [HttpGet]
+        [Route("RefreshAccesToken")]
+        public IActionResult RefreshAccesToken(string email) => Ok(servicioToken.RefreshToken(email, string.Format("{0}://{1}", Request.Scheme, Request.Host)));
+
 
         [HttpPost]
         [Route("AlmacenarToken")]
@@ -33,15 +36,5 @@ namespace LoginApp.Controllers
             servicioToken.AlmacenarToken(loginXoauth2);
             return Ok("Token almacenado correctamente");
         }
-
-        [HttpPost]
-        [Route("RefreshAccesToken")]
-        public IActionResult RefreshAccesToken(DTOLoginXoauth2 loginXoauth2)
-        {
-            var absUrl = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, "");
-            //servicioToken.RefreshToken(loginXoauth2.RefreshToken);
-            return Ok(absUrl);
-        }
-
     }
 }
