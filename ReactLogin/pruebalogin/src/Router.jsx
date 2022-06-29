@@ -1,5 +1,4 @@
-import { PublicClientApplication } from "@azure/msal-browser";
-import React from "react";
+
 import {
   BrowserRouter,
   Switch,
@@ -7,28 +6,24 @@ import {
  
 } from "react-router-dom";
 import App from "./App";
-import { msalConfig } from "./authConfig";
 import PaginaNoEncontrada from "./Paginas/PaginaNoEncontrada";
+import {msalInstance } from './InstanciaMSAL'
 
-export const msalInstance = new PublicClientApplication(msalConfig);
-
-const accounts = msalInstance.getAllAccounts();
-
-if (accounts.length > 0) {
-  msalInstance.setActiveAccount(accounts[0]);
-}
 //Todo:Pendiente ver por que no redireciona
 export default function CustomLinkExample() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/Ruta">
       <Switch>
         <Route exact path="/" >
           <App instance={msalInstance} />
         </Route>
-        <Route  path="/PaginaNoEncontrada" >   
+        <Route path="/PaginaNoEncontrada" >   
           <PaginaNoEncontrada>PaginaNoEncontrada</PaginaNoEncontrada>      
-        </Route>              
-        <Route  path="*" component={PaginaNoEncontrada}/>      
+        </Route>
+        <Route path="/ValidacionCorrecta" >   
+          <PaginaNoEncontrada>PaginaNoEncontrada</PaginaNoEncontrada>      
+        </Route>                  
+        <Route path="*" component={PaginaNoEncontrada}/>      
         
       </Switch>
     </BrowserRouter>

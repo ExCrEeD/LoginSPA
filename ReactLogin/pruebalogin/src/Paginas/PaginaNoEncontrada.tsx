@@ -2,22 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-const SContenedorPaginaNoEncontrada = styled.div``;
-const SMensaje = styled.h1`
-  font-weight: 700;
-  text-decoration: none;
-  font-family: Montserrat, sans-serif;
-  font-style: normal;
-  color: #00335e;
-  font-size: 50px;
-  text-transform: none;
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+const SContenedorPaginaNoEncontrada = styled.div`
+  user-select: none;
 `;
-
-const SError = styled.div`
+const SFondo = styled.div`
   text-align: center;
   font-family: Cairo, sans-serif;
   color: #f3f6f9;
@@ -31,6 +19,18 @@ const SError = styled.div`
   width: 100%;
   z-index: -1;
 `;
+const SMensaje = styled.h1`
+  font-weight: 700;
+  text-decoration: none;
+  font-family: Montserrat, sans-serif;
+  font-style: normal;
+  color: #00335e;
+  font-size: 50px;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
 
 const SLink = styled(Link)`
   border: 1px solid #3280b8;
@@ -43,7 +43,6 @@ const SLink = styled(Link)`
   background-color: rgba(50, 128, 184, 1);
   border-radius: 50px;
   color: #fff;
-  text-transform: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -59,11 +58,11 @@ const SLink = styled(Link)`
 const PaginaNoEncontrada = () => {
   return (
     <SContenedorPaginaNoEncontrada>
-      <SError>
+      <SFondo>
         404
         <SMensaje>Página no encontrada.</SMensaje>
         <SLink to='/'>Ir al Inicio</SLink>
-      </SError>
+      </SFondo>
     </SContenedorPaginaNoEncontrada>
   );
 };
