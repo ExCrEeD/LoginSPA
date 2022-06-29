@@ -1,4 +1,6 @@
+using LoginApp.DTOS;
 using LoginApp.Infraestructura;
+using LoginApp.Infraestructura.Repositorio;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +26,8 @@ namespace LoginApp
             string path = Path.Combine(Directory.GetCurrentDirectory(), "App_Data");
             services.AddDbContext<ContextoLogin>(options => options.UseSqlServer(Configuration.GetConnectionString("LoginConectionString").Replace("[DataDirectory]",path)));
             services.AddControllers();
+            services.AddScoped<IServicioToken, ServicioToken>();
+            services.AddScoped<IRepositorioToken, RepositorioToken>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -15,5 +15,13 @@ namespace LoginApp.Infraestructura
         }
 
         public DbSet<IniciosDeSesion> IniciosDeSesion { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<IniciosDeSesion>().Property(s => s.Email).IsUnicode(false);
+            modelBuilder.Entity<IniciosDeSesion>().Property(s => s.AccesToken).IsUnicode(false);
+            modelBuilder.Entity<IniciosDeSesion>().Property(s => s.RefreshToken).IsUnicode(false);
+            modelBuilder.Entity<IniciosDeSesion>().Property(s => s.Scope).IsUnicode(false);
+        }
     }
 }
