@@ -1,77 +1,127 @@
-import React from "react";
+import React, { useEffect } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import { MsalProvider } from "@azure/msal-react";
-import { loginRequest } from "./authConfig";
 import { useState } from "react";
 import {
   AuthenticationResult,
   PublicClientApplication,
 } from "@azure/msal-browser";
 import styled from "styled-components";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory,useParams } from "react-router-dom";
 import { validarRutaPeticion } from "./Utilidades/Textos";
+import queryString from "query-string"
+import { useMsal, AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
+import { TokenAuth } from "modelos/TokenAuth";
+import { AlmacenarToken } from "services/TokenServices";
+import moment from "moment";
+import { copyFile } from "fs";
+
+const extractQueryStringParams = (query: string) => {
+  const ifArraySelectFirst = (obj: any) => {
+      if (Array.isArray(obj)) {
+          return obj[0];
+      }
+      return obj;
+  };
+  let { scope,redirect }: any = queryString.parse(query);
+  scope = ifArraySelectFirst(scope);
+  redirect = ifArraySelectFirst(redirect);
+  console.log(redirect);
+  return { scope,redirect };
+};
 
 interface IApp {
   instance: PublicClientApplication;
 }
 
+
 export const App: React.FC<IApp> = ({ instance }) => {
-  const [providerOffice, setProviderOffice] = useState<any>();
+   const { scope,redirect }: any = extractQueryStringParams(window.location.search);
+   //let {scope} = useParams();
+  useEffect(() => {
+    if(scope !== undefined)
+    {
+      loginOffice365();
+    }
+  }, [])
+   
+
+  //const [providerOffice, setProviderOffice] = useState<any>();
+
   const loginOffice365 = () => {
-    instance.loginPopup(loginRequest).then((c) => setProviderOffice(c));
-  };
-  let history = useHistory();
-
-  const obtenerToken = async () => {
-    //  console.log(instance.acquireTokenSilent({
-    //   account:providerOffice!.account,
-    //   scopes:providerOffice.scopes
-    // }) );
-    console.log(providerOffice);
+    const  scopeParams = {
+      scopes:  scope.split(",")
+    }
+    //instance.loginRedirect(scopeParams).then(x=>console.log(instance));
+    instance.loginPopup(scopeParams).then(x=>console.log(instance)).catch(x=>console.log(x));
   };
 
-  const validarURl = () => {
-    const token: string =
-      "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjJaUXBKM1VwYmpBWVhZR2FYRUpsOGxWMFRPSSJ9.eyJhdWQiOiJiZmQzMjAwMC1hZDExLTQ4NWItYTgxZi1kYzc5MjllNTliOTUiLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vYmNiNGJjNDEtZTg1NC00ZjEwLWI5MDYtZDE2NDNkNDVlMzQ5L3YyLjAiLCJpYXQiOjE2NTY1MjQwMDUsIm5iZiI6MTY1NjUyNDAwNSwiZXhwIjoxNjU2NTI3OTA1LCJhaW8iOiJBVFFBeS84VEFBQUFQVXM5SGE5Y2pZSUlKWUVBT3A2UVZZTlV6b2ppQUMxdkRVY2xDcHU0UGQxZVVJRDlzYk1uNWd3dXNxbmFDWFFCIiwiZW1haWwiOiJqZWlzb24uZmVybmFuZGV6QHNpbmNvLmNvbS5jbyIsIm5hbWUiOiJKZWlzb24gRmVybmFuZGV6Iiwibm9uY2UiOiJlZmMyMjZjMi1lZmI4LTRmNzktYjY5ZC00ZDg1NjM2MTk0ODciLCJvaWQiOiJiMGE5ZjBmZC03MTYxLTQxMTItYWJiNi0zNmU5M2Q1M2M0NWQiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJqZWlzb24uZmVybmFuZGV6QHNpbmNvLmNvbS5jbyIsInJoIjoiMC5BVFFBUWJ5MHZGVG9FRS01QnRGa1BVWGpTUUFnMDc4UnJWdElxQl9jZVNubG01VTBBS3cuIiwic3ViIjoiMG9MZ1FoLVBXc1VnUi1DcXJnZzJSczNDelNNb3B5TEtDM3RuWnJvSTQ3ZyIsInRpZCI6ImJjYjRiYzQxLWU4NTQtNGYxMC1iOTA2LWQxNjQzZDQ1ZTM0OSIsInV0aSI6IlN0QUlSMDY3ZDAyMUhLVGVSSkNhQVEiLCJ2ZXIiOiIyLjAifQ.ZH8Vdlai6jPW7Vz148AyQYIZaP2YIAeTaFOCA4ujTJvlUXEeA7Tb5I3FMdv102tUdWDpLPENiQyzFIzgERJ2KBy0cj3wHAK9T4o3SZmq-5CBhvQTbXPw80t0FaWZUJaBSFCXiNxXzEM-4gMPvFjUAsbqy6KZ3i1NglL2yicKLVmAw3t2Dbl600SR9CqIqiUT0DzWSFD_7Zb5w_JURQ_vMbR4lnsk5SMiVj5KHaPoxRUc5cv4BN37Fvh-x3_4g5xo6J5IrXUcHPeVM3DH33fWQaARbFlRYSgr16CNXNbRbjqtDnXhEmdYM25nmhEgglAA-b11HUeAztUFjC8o2iG2Ow";
-    const scopes: string[] = [
-      "https://outlook.office.com/IMAP.AccessAsUser.All",
-      "offline_access",
-      "email",
-      "openid",
-    ];
-    const rutaDePrueba: string = "https://www.sinco.com.co/";
 
-    const rutaCompletaDePrueba: string =
-      rutaDePrueba + "?token=" + token + "&scopes=" + scopes;
+function WelcomeUser() {
+    const { accounts } = useMsal();
+    const username = accounts[0].username;
+    const authToken = getTokenFromStorage();
+    AlmacenarToken(authToken);
+    instance.logoutRedirect();
+    return <p>Welcome, {username}</p>
+}
 
-    validarRutaPeticion(rutaCompletaDePrueba)
-      ? console.log("se genera solcitud")
-      : history.push("/PaginaNoEncontrada");
-  };
+const redirectOrigin =() => {
+  window.location.href = redirect.replace("hashtag","#");
+}
+
+const  getTokenFromStorage = () => {
+
+  const authToken : TokenAuth = {
+    AccesToken:"",
+    Email:"",
+    ExpiracionAccesToken:"",
+    RefreshToken:"",
+    Scopes:""
+  }; 
+
+  let keys = Object.keys(sessionStorage),i = keys.length;
+  while ( i-- ) {
+      let store = sessionStorage.getItem(keys[i]);
+      var isValidJSON = true;
+      try { JSON.parse(store!) } catch { isValidJSON = false }
+      if(isValidJSON)
+      {
+        let storeObject = JSON.parse(store!);
+  
+        if(storeObject.credentialType == 'RefreshToken')
+          authToken.RefreshToken = storeObject.secret;
+        
+        if (storeObject.credentialType == 'AccessToken')
+        {
+          console.log(storeObject.expiresOn);
+          authToken.ExpiracionAccesToken = moment(storeObject.expiresOn * 1000).format();
+          authToken.AccesToken = storeObject.secret;
+          authToken.Scopes = storeObject.target;
+        }
+
+        if (storeObject.authorityType == 'MSSTS')
+          authToken.Email = storeObject.username;
+      }
+  }
+  return authToken;
+}
+
 
   return (
     <MsalProvider instance={instance}>
+      
       <div className='App'>
-        <header className='App-header'>
-          <img src={logo} className='App-logo' alt='logo' />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className='App-link'
-            href='https://reactjs.org'
-            target='_blank'
-            rel='noopener noreferrer'>
-            Learn React
-          </a>
-          <button onClick={() => loginOffice365()}>Office 365 Login</button>
-          <button onClick={() => obtenerToken()}>ObtenerToken</button>
-          <button onClick={() => validarURl()}>validarURl</button>
 
-          <Link to='/PaginaNoEncontrada'>PaginaNoEncontrada</Link>
-          <Link to='/sss'>sss</Link>
-        </header>
+        <AuthenticatedTemplate>
+                <p>This will only render if a user is signed-in.</p>
+                <WelcomeUser />
+            </AuthenticatedTemplate>
+            <UnauthenticatedTemplate>
+                <p>Autenticacion completada por favor cierre esta ventana.</p>
+                <button onClick={()=> redirectOrigin()}>Redirect</button>
+            </UnauthenticatedTemplate>
       </div>
     </MsalProvider>
   );

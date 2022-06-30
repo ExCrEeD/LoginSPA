@@ -37,6 +37,7 @@ namespace LoginApp
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             app.UseHttpsRedirection();

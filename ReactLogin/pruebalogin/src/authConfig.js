@@ -15,7 +15,7 @@ export const msalConfig = {
         clientId: "bfd32000-ad11-485b-a81f-dc7929e59b95", // This is the ONLY mandatory field that you need to supply.
         //authority: "https://login.microsoftonline.com/OrganizacionPruebaDominio.onmicrosoft.com", // Defaults to "https://login.microsoftonline.com/common"
         authority: "https://login.microsoftonline.com/common", // Defaults to "https://login.microsoftonline.com/common"
-        redirectUri: "http://localhost:3000", // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
+        redirectUri: "http://localhost:3001/", // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
         postLogoutRedirectUri: "/", // Indicates the page to navigate after logout.~
         navigateToLoginRequestUrl: true, // If "true", will navigate back to the original request location before processing the auth code response.
     },
