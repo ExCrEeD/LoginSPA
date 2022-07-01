@@ -54,21 +54,26 @@ export const App: React.FC<IApp> = ({ instance }) => {
       scopes:  scope.split(",")
     }
     //instance.loginRedirect(scopeParams).then(x=>console.log(instance));
-    instance.loginPopup(scopeParams).then(x=>console.log(instance)).catch(x=>console.log(x));
+    console.log(scopeParams);
+    instance.loginPopup(scopeParams).then(x=>{
+      const authToken = getTokenFromStorage();
+      AlmacenarToken(authToken);
+      instance.logoutPopup().then(()=>redirectOrigin(x.account!.username));
+    }).catch(x=>console.log(x));
   };
 
 
 function WelcomeUser() {
     const { accounts } = useMsal();
-    const username = accounts[0].username;
-    const authToken = getTokenFromStorage();
-    AlmacenarToken(authToken);
-    instance.logoutRedirect();
+     const username = accounts[0].username;
+    // const authToken = getTokenFromStorage();
+    // AlmacenarToken(authToken);
+    
     return <p>Welcome, {username}</p>
 }
 
-const redirectOrigin =() => {
-  window.location.href = redirect.replace("hashtag","#");
+const redirectOrigin =(username:string) => {
+  window.location.href = redirect.replace("hashtag","#")+`&email=${username}`;
 }
 
 const  getTokenFromStorage = () => {
@@ -112,15 +117,14 @@ const  getTokenFromStorage = () => {
   return (
     <MsalProvider instance={instance}>
       
-      <div className='App'>
+      <div className='App' style={{"backgroundImage":"url(https://images.hdqwalls.com/download/anime-boy-lost-in-dreams-4k-3h-1920x1080.jpg)","height":"100%"}}>
 
-        <AuthenticatedTemplate>
+            <AuthenticatedTemplate>
                 <p>This will only render if a user is signed-in.</p>
                 <WelcomeUser />
             </AuthenticatedTemplate>
             <UnauthenticatedTemplate>
                 <p>Autenticacion completada por favor cierre esta ventana.</p>
-                <button onClick={()=> redirectOrigin()}>Redirect</button>
             </UnauthenticatedTemplate>
       </div>
     </MsalProvider>

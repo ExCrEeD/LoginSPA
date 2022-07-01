@@ -1,9 +1,3 @@
-/*
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-
-import { LogLevel } from "@azure/msal-browser";
 
 /**
  * Configuration object to be passed to MSAL instance on creation. 
@@ -16,35 +10,12 @@ export const msalConfig = {
         //authority: "https://login.microsoftonline.com/OrganizacionPruebaDominio.onmicrosoft.com", // Defaults to "https://login.microsoftonline.com/common"
         authority: "https://login.microsoftonline.com/common", // Defaults to "https://login.microsoftonline.com/common"
         redirectUri: "http://localhost:3001/", // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
-        postLogoutRedirectUri: "/", // Indicates the page to navigate after logout.~
+        postLogoutRedirectUri: "http://localhost:3001/", // Indicates the page to navigate after logout.~
         navigateToLoginRequestUrl: true, // If "true", will navigate back to the original request location before processing the auth code response.
     },
     cache: {
         cacheLocation: "sessionStorage", // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
         storeAuthStateInCookie: true, // Set this to "true" if you are having issues on IE11 or Edge
-    },
-    system: {
-        loggerOptions: {
-            loggerCallback: (level, message, containsPii) => {
-                if (containsPii) {
-                    return;
-                }
-                switch (level) {
-                    case LogLevel.Error:
-                        console.error(message);
-                        return;
-                    case LogLevel.Info:
-                        console.info(message);
-                        return;
-                    case LogLevel.Verbose:
-                        console.debug(message);
-                        return;
-                    case LogLevel.Warning:
-                        console.warn(message);
-                        return;
-                }
-            }
-        }
     },
     telemetry: {
         application: {
@@ -54,15 +25,6 @@ export const msalConfig = {
     }
 };
 
-/**
- * Scopes you add here will be prompted for user consent during sign-in.
- * By default, MSAL.js will add OIDC scopes (openid, profile, email) to any login request.
- * For more information about OIDC scopes, visit: 
- * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
- */
-export const loginRequest = {
-    scopes: ["https://outlook.office.com/IMAP.AccessAsUser.All","offline_access","email","openid"]
-};
 
 /**
  * Add here the endpoints and scopes when obtaining an access token for protected web APIs. For more information, see:
