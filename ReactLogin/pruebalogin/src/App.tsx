@@ -23,6 +23,7 @@ import { copyFile } from "fs";
 import { verificarBloqueoPopUp } from "Utilidades/Navegador";
 import BloqueoPopUp from "Paginas/BloqueoPopUp";
 import AutenticacionEnCurso from "Paginas/AutenticacionEnCurso";
+import CancelacionFlujoLogin from "Paginas/CancelacionFlujoLogin";
 
 const extractQueryStringParams = (query: string) => {
   const ifArraySelectFirst = (obj: any) => {
@@ -47,6 +48,7 @@ export const App: React.FC<IApp> = ({ instance }) => {
     window.location.search
   );
   const [bloqueoPopUp, setbloqueoPopUp] = useState<boolean>(false);
+  const [popUpActivo, setpopUpActivo] = useState(true);
   //let {scope} = useParams();
   useEffect(() => {
     setbloqueoPopUp(verificarBloqueoPopUp());
@@ -70,7 +72,7 @@ export const App: React.FC<IApp> = ({ instance }) => {
         AlmacenarToken(authToken);
         instance.logoutPopup().then(() => redirectOrigin(x.account!.username));
       })
-      .catch((x) => console.log(x));
+      .catch((x) => setpopUpActivo(false));
   };
 
   function WelcomeUser() {
@@ -133,8 +135,10 @@ export const App: React.FC<IApp> = ({ instance }) => {
       <div className='App'>
         {bloqueoPopUp ? (
           <BloqueoPopUp redirect={redirect} />
-        ) : (
+        ) : popUpActivo ? (
           <AutenticacionEnCurso />
+        ) : (
+          <CancelacionFlujoLogin redirect={redirect} />
         )}
       </div>
     </MsalProvider>
