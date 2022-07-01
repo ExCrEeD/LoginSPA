@@ -8,124 +8,134 @@ import {
   PublicClientApplication,
 } from "@azure/msal-browser";
 import styled from "styled-components";
-import { Link, useHistory,useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import { validarRutaPeticion } from "./Utilidades/Textos";
-import queryString from "query-string"
-import { useMsal, AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
+import queryString from "query-string";
+import {
+  useMsal,
+  AuthenticatedTemplate,
+  UnauthenticatedTemplate,
+} from "@azure/msal-react";
 import { TokenAuth } from "modelos/TokenAuth";
 import { AlmacenarToken } from "services/TokenServices";
 import moment from "moment";
 import { copyFile } from "fs";
+import { verificarBloqueoPopUp } from "Utilidades/Navegador";
+import BloqueoPopUp from "Paginas/BloqueoPopUp";
+import AutenticacionEnCurso from "Paginas/AutenticacionEnCurso";
 
 const extractQueryStringParams = (query: string) => {
   const ifArraySelectFirst = (obj: any) => {
-      if (Array.isArray(obj)) {
-          return obj[0];
-      }
-      return obj;
+    if (Array.isArray(obj)) {
+      return obj[0];
+    }
+    return obj;
   };
-  let { scope,redirect }: any = queryString.parse(query);
+  let { scope, redirect }: any = queryString.parse(query);
   scope = ifArraySelectFirst(scope);
   redirect = ifArraySelectFirst(redirect);
   console.log(redirect);
-  return { scope,redirect };
+  return { scope, redirect };
 };
 
 interface IApp {
   instance: PublicClientApplication;
 }
 
-
 export const App: React.FC<IApp> = ({ instance }) => {
-   const { scope,redirect }: any = extractQueryStringParams(window.location.search);
-   //let {scope} = useParams();
+  const { scope, redirect }: any = extractQueryStringParams(
+    window.location.search
+  );
+  const [bloqueoPopUp, setbloqueoPopUp] = useState<boolean>(false);
+  //let {scope} = useParams();
   useEffect(() => {
-    if(scope !== undefined)
-    {
+    setbloqueoPopUp(verificarBloqueoPopUp());
+    if (scope !== undefined) {
       loginOffice365();
     }
-  }, [])
-   
+  }, []);
 
   //const [providerOffice, setProviderOffice] = useState<any>();
 
   const loginOffice365 = () => {
-    const  scopeParams = {
-      scopes:  scope.split(",")
-    }
+    const scopeParams = {
+      scopes: scope.split(","),
+    };
     //instance.loginRedirect(scopeParams).then(x=>console.log(instance));
     console.log(scopeParams);
-    instance.loginPopup(scopeParams).then(x=>{
-      const authToken = getTokenFromStorage();
-      AlmacenarToken(authToken);
-      instance.logoutPopup().then(()=>redirectOrigin(x.account!.username));
-    }).catch(x=>console.log(x));
+    instance
+      .loginPopup(scopeParams)
+      .then((x) => {
+        const authToken = getTokenFromStorage();
+        AlmacenarToken(authToken);
+        instance.logoutPopup().then(() => redirectOrigin(x.account!.username));
+      })
+      .catch((x) => console.log(x));
   };
 
-
-function WelcomeUser() {
+  function WelcomeUser() {
     const { accounts } = useMsal();
-     const username = accounts[0].username;
+    const username = accounts[0].username;
     // const authToken = getTokenFromStorage();
     // AlmacenarToken(authToken);
-    
-    return <p>Welcome, {username}</p>
-}
 
-const redirectOrigin =(username:string) => {
-  window.location.href = redirect.replace("hashtag","#")+`&email=${username}`;
-}
+    return <p>Welcome, {username}</p>;
+  }
 
-const  getTokenFromStorage = () => {
+  const redirectOrigin = (username: string) => {
+    window.location.href =
+      redirect.replace("hashtag", "#") + `?email=${username}`;
+  };
 
-  const authToken : TokenAuth = {
-    AccesToken:"",
-    Email:"",
-    ExpiracionAccesToken:"",
-    RefreshToken:"",
-    Scopes:""
-  }; 
+  const getTokenFromStorage = () => {
+    const authToken: TokenAuth = {
+      AccesToken: "",
+      Email: "",
+      ExpiracionAccesToken: "",
+      RefreshToken: "",
+      Scopes: "",
+    };
 
-  let keys = Object.keys(sessionStorage),i = keys.length;
-  while ( i-- ) {
+    let keys = Object.keys(sessionStorage),
+      i = keys.length;
+    while (i--) {
       let store = sessionStorage.getItem(keys[i]);
       var isValidJSON = true;
-      try { JSON.parse(store!) } catch { isValidJSON = false }
-      if(isValidJSON)
-      {
+      try {
+        JSON.parse(store!);
+      } catch {
+        isValidJSON = false;
+      }
+      if (isValidJSON) {
         let storeObject = JSON.parse(store!);
-  
-        if(storeObject.credentialType == 'RefreshToken')
+
+        if (storeObject.credentialType == "RefreshToken")
           authToken.RefreshToken = storeObject.secret;
-        
-        if (storeObject.credentialType == 'AccessToken')
-        {
+
+        if (storeObject.credentialType == "AccessToken") {
           console.log(storeObject.expiresOn);
-          authToken.ExpiracionAccesToken = moment(storeObject.expiresOn * 1000).format();
+          authToken.ExpiracionAccesToken = moment(
+            storeObject.expiresOn * 1000
+          ).format();
           authToken.AccesToken = storeObject.secret;
           authToken.Scopes = storeObject.target;
         }
 
-        if (storeObject.authorityType == 'MSSTS')
+        if (storeObject.authorityType == "MSSTS")
           authToken.Email = storeObject.username;
       }
-  }
-  return authToken;
-}
-
+    }
+    return authToken;
+  };
 
   return (
     <MsalProvider instance={instance}>
-      
-      <div className='App' style={{"backgroundImage":"url(https://images.hdqwalls.com/download/anime-boy-lost-in-dreams-4k-3h-1920x1080.jpg)","height":"100%"}}>
-
-            <AuthenticatedTemplate>
-                <p>This will only render if a user is signed-in.</p>
-                <WelcomeUser />
-            </AuthenticatedTemplate>
-            <UnauthenticatedTemplate>
-                <p>Autenticacion completada por favor cierre esta ventana.</p>
-            </UnauthenticatedTemplate>
+      <div className='App'>
+        {bloqueoPopUp ? (
+          <BloqueoPopUp redirect={redirect} />
+        ) : (
+          <AutenticacionEnCurso />
+        )}
       </div>
     </MsalProvider>
   );
