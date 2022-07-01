@@ -8,7 +8,7 @@ import {
   PublicClientApplication,
 } from "@azure/msal-browser";
 import styled from "styled-components";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link, useHistory,useLocation,useParams } from "react-router-dom";
 import { validarRutaPeticion } from "./Utilidades/Textos";
 import queryString from "query-string";
 import {
@@ -25,7 +25,7 @@ import BloqueoPopUp from "Paginas/BloqueoPopUp";
 import AutenticacionEnCurso from "Paginas/AutenticacionEnCurso";
 import CancelacionFlujoLogin from "Paginas/CancelacionFlujoLogin";
 
-const extractQueryStringParams = (query: string) => {
+const extractQueryStringParams = (query: string,locationHash : string) => {
   const ifArraySelectFirst = (obj: any) => {
     if (Array.isArray(obj)) {
       return obj[0];
@@ -34,19 +34,18 @@ const extractQueryStringParams = (query: string) => {
   };
   let { scope, redirect }: any = queryString.parse(query);
   scope = ifArraySelectFirst(scope);
-  redirect = ifArraySelectFirst(redirect);
-  console.log(redirect);
-  return { scope, redirect };
+  redirect = ifArraySelectFirst(redirect)+locationHash;
+  return { scope,redirect };
 };
 
 interface IApp {
-  instance: PublicClientApplication;
+  instance: PublicClientApplication
 }
 
-export const App: React.FC<IApp> = ({ instance }) => {
-  const { scope, redirect }: any = extractQueryStringParams(
-    window.location.search
-  );
+
+export const App: React.FC<IApp> = ( { instance }) => {
+  const location = useLocation();
+  const { scope,redirect }: any = extractQueryStringParams(location.search,location.hash);
   const [bloqueoPopUp, setbloqueoPopUp] = useState<boolean>(false);
   const [popUpActivo, setpopUpActivo] = useState(true);
   //let {scope} = useParams();
@@ -84,10 +83,9 @@ export const App: React.FC<IApp> = ({ instance }) => {
     return <p>Welcome, {username}</p>;
   }
 
-  const redirectOrigin = (username: string) => {
-    window.location.href =
-      redirect.replace("hashtag", "#") + `?email=${username}`;
-  };
+const redirectOrigin =(username:string) => {
+  window.location.href = redirect+`?email=${username}`;
+}
 
   const getTokenFromStorage = () => {
     const authToken: TokenAuth = {
