@@ -45,7 +45,8 @@ interface IApp {
 export const App: React.FC<IApp> = ( { instance }) => {
   const location = useLocation();
   const { scope,redirect }: any = extractQueryStringParams(location.search,location.hash);
-  console.log(scope,redirect)
+  const [bloqueoPopUp, setbloqueoPopUp] = useState<boolean>(false);
+
   useEffect(() => {
     setbloqueoPopUp(verificarBloqueoPopUp());
     if (scope !== undefined) {
