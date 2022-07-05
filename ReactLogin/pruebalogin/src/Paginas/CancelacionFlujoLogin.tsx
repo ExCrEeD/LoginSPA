@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import IconoError from "../Multimedia/IconoErrorV2.png";
+import IconoError from "../Multimedia/IconoUsuarioLoginError.png";
 import LogoRe from "../Multimedia/LogoRe.png";
 const ContenedorAutenticacionEnCurso = styled.div`
   font-family: "Ubuntu", sans-serif;
