@@ -8,7 +8,7 @@ const SContenedorPaginaNoEncontrada = styled.div`
 const SFondo = styled.div`
   text-align: center;
   font-family: Cairo, sans-serif;
-  color: #f3f6f9;
+  color: #6991d0e0;
   content: attr(data-error);
   font-size: 40vw;
   font-weight: 700;
