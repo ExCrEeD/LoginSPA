@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.IO;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.Extensions.FileProviders;
 
 namespace LoginApp
 {
@@ -29,6 +31,12 @@ namespace LoginApp
             services.AddScoped<IServicioToken, ServicioToken>();
             services.AddScoped<IRepositorioToken, RepositorioToken>();
             services.AddHostedService<ServicioAutomatico>();
+            //Carga la página estática de React
+
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "Web/build";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,6 +59,25 @@ namespace LoginApp
             {
                 endpoints.MapControllers();
             });
+
+            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                Path.Combine(Directory.GetCurrentDirectory(), "Web/build/static")),
+                RequestPath = "/static"
+            });
+
+            //Inicia el Cliente
+            app.UseSpa(spa =>
+              {
+                  spa.Options.SourcePath = "Web";
+                  if (env.IsDevelopment())
+                  {
+                      spa.UseReactDevelopmentServer(npmScript: "start");
+                  }
+              }   
+            );
         }
     }
 }
