@@ -1,6 +1,6 @@
-using LoginApp.DTOS;
 using LoginApp.Infraestructura;
 using LoginApp.Infraestructura.Repositorio;
+using LoginApp.Servicios;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +28,7 @@ namespace LoginApp
             services.AddControllers();
             services.AddScoped<IServicioToken, ServicioToken>();
             services.AddScoped<IRepositorioToken, RepositorioToken>();
+            services.AddHostedService<ServicioAutomatico>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -2,14 +2,14 @@
 using LoginApp.Infraestructura.Repositorio;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.AspNetCore.Http;
 
 namespace LoginApp
 {
@@ -19,6 +19,7 @@ namespace LoginApp
         DTOLoginXoauth2 ConsultarToken(string email);
         DTOLoginXoauth2 RefreshToken(string email, string callbackURL);
         ConfigApp ObtenerConfiguracionAPP();
+        void RefrescarTokenProcesoAutomatico();
     }
     public class ServicioToken : IServicioToken
     {
@@ -109,6 +110,21 @@ namespace LoginApp
                 listener.Stop();
                 return port;
             }
+        }
+
+        public void RefrescarTokenProcesoAutomatico()
+        {
+            var cuentasdeCorreo = repositorioToken.ObtenerCuentasDeCorreo();
+            foreach (var email in cuentasdeCorreo)
+            {
+                try
+                {
+                    RefreshAccessToken(email,string.Empty).GetAwaiter().GetResult();
+                }
+                catch(Exception ex) {
+                    repositorioToken.ActualizarExepcionAutenticacionEmail(email,ex.Message);
+                }
+            };
         }
     }
 }

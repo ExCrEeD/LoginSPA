@@ -15,5 +15,6 @@ namespace LoginApp.Infraestructura.Modelos
         public string Scope { get; set; }
         public DateTime ExpiracionAccesToken { get; set; }
         public DateTime ExpiracionRefreshToken { get; set; }
+        public string ExcepcionAutenticacion { get; set; }
     }
 }
