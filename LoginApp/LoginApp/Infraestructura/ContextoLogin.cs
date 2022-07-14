@@ -1,9 +1,8 @@
 ﻿using LoginApp.Infraestructura.Modelos;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LoginApp.Infraestructura
 {
@@ -11,17 +10,24 @@ namespace LoginApp.Infraestructura
     {
         public ContextoLogin(DbContextOptions<ContextoLogin> options) :base(options)
         {
-
+            if ((Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator).Exists())
+            {
+                this.Database.Migrate();
+            }
+            else
+            {
+                throw new Exception("No se ha creado la base de datos");
+            }
         }
 
-        public DbSet<IniciosDeSesion> IniciosDeSesion { get; set; }
+        public DbSet<CuentasCorreo> CuentasCorreo { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<IniciosDeSesion>().Property(s => s.Email).IsUnicode(false);
-            modelBuilder.Entity<IniciosDeSesion>().Property(s => s.AccesToken).IsUnicode(false);
-            modelBuilder.Entity<IniciosDeSesion>().Property(s => s.RefreshToken).IsUnicode(false);
-            modelBuilder.Entity<IniciosDeSesion>().Property(s => s.Scope).IsUnicode(false);
+            modelBuilder.Entity<CuentasCorreo>().Property(s => s.Email).IsUnicode(false);
+            modelBuilder.Entity<CuentasCorreo>().Property(s => s.AccesToken).IsUnicode(false);
+            modelBuilder.Entity<CuentasCorreo>().Property(s => s.RefreshToken).IsUnicode(false);
+            modelBuilder.Entity<CuentasCorreo>().Property(s => s.Scope).IsUnicode(false);
         }
     }
 }

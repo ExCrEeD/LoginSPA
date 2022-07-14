@@ -127,3 +127,4 @@ C:\Users\danie\Documents\office365\LoginApp\LoginApp\bin\Debug\netcoreapp3.1\Mic
 C:\Users\danie\Documents\office365\LoginApp\LoginApp\bin\Debug\netcoreapp3.1\Microsoft.Extensions.FileProviders.Abstractions.dll
 C:\Users\danie\Documents\office365\LoginApp\LoginApp\bin\Debug\netcoreapp3.1\Microsoft.Extensions.FileProviders.Physical.dll
 C:\Users\danie\Documents\office365\LoginApp\LoginApp\bin\Debug\netcoreapp3.1\Microsoft.Extensions.FileSystemGlobbing.dll
+C:\Users\danie\Documents\office365\LoginApp\LoginApp\obj\Debug\netcoreapp3.1\LoginApp.csproj.AssemblyReference.cache

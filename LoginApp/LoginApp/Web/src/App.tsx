@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useRef } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import { MsalProvider } from "@azure/msal-react";
 import { useState } from "react";
 import {
   AuthenticationResult,
+  IPublicClientApplication,
   PublicClientApplication,
 } from "@azure/msal-browser";
 import styled from "styled-components";
@@ -24,6 +25,9 @@ import { verificarBloqueoPopUp } from "Utilidades/Navegador";
 import BloqueoPopUp from "Paginas/BloqueoPopUp";
 import AutenticacionEnCurso from "Paginas/AutenticacionEnCurso";
 import CancelacionFlujoLogin from "Paginas/CancelacionFlujoLogin";
+import {ObtenerConfiguracionAPP} from "services/TokenServices"
+import { msalConfig } from "./authConfig";
+import { NotificationManager } from "react-notifications";
 
 const extractQueryStringParams = (query: string,locationHash : string) => {
   const ifArraySelectFirst = (obj: any) => {
@@ -38,32 +42,40 @@ const extractQueryStringParams = (query: string,locationHash : string) => {
   return { scope,redirect };
 };
 
-interface IApp {
-  instance: PublicClientApplication
-}
 
-
-export const App: React.FC<IApp> = ( { instance }) => {
+export const App = () => {
   const location = useLocation();
   const { scope,redirect }: any = extractQueryStringParams(location.search,location.hash);
   const [bloqueoPopUp, setbloqueoPopUp] = useState<boolean>(false);
   const [popUpActivo, setpopUpActivo] = useState(true);
-  //let {scope} = useParams();
+  const [msalInstance, setMsalInstance]  = useState<IPublicClientApplication>();
+  
+
+
+  
   useEffect(() => {
-    setbloqueoPopUp(verificarBloqueoPopUp());
-    if (scope !== undefined) {
-      loginOffice365();
-    }
+    ObtenerConfiguracionAPP().then(x=>{
+      msalConfig.auth.clientId = x.clientID
+      let instance =new PublicClientApplication(msalConfig);
+      const accounts = instance.getAllAccounts();    
+      if (accounts.length > 0) {
+        instance.setActiveAccount(accounts[0]);
+      }
+      setbloqueoPopUp(verificarBloqueoPopUp());
+      if (scope !== undefined) {
+        loginOffice365(instance);
+      }
+      setMsalInstance(instance);
+    });
   }, []);
 
   //const [providerOffice, setProviderOffice] = useState<any>();
 
-  const loginOffice365 = () => {
+  const loginOffice365 = (instance: IPublicClientApplication) => {
     const scopeParams = {
       scopes: scope.split(","),
     };
     //instance.loginRedirect(scopeParams).then(x=>console.log(instance));
-    console.log(scopeParams);
     instance
       .loginPopup(scopeParams)
       .then((x) => {
@@ -71,7 +83,9 @@ export const App: React.FC<IApp> = ( { instance }) => {
         AlmacenarToken(authToken);
         instance.logoutPopup().then(() => redirectOrigin(x.account!.username));
       })
-      .catch((x) => setpopUpActivo(false));
+      .catch((x) => {
+        console.log(x);
+        setpopUpActivo(false)});
   };
 
   function WelcomeUser() {
@@ -129,17 +143,19 @@ const redirectOrigin =(username:string) => {
   };
 
   return (
-    <MsalProvider instance={instance}>
-      <div className='App'>
-        {bloqueoPopUp ? (
-          <BloqueoPopUp redirect={redirect} />
-        ) : popUpActivo ? (
-          <AutenticacionEnCurso />
-        ) : (
-          <CancelacionFlujoLogin redirect={redirect} />
-        )}
-      </div>
-    </MsalProvider>
+    
+      msalInstance &&( <MsalProvider instance={msalInstance}>
+        <div className='App'>
+          {NotificationManager.error("xd", null, 10000)}
+          {bloqueoPopUp ? (
+            <BloqueoPopUp redirect={redirect} />
+          ) : popUpActivo ? (
+            <AutenticacionEnCurso />
+          ) : (
+            <CancelacionFlujoLogin redirect={redirect} />
+          )}
+        </div>
+      </MsalProvider >)
   );
 };
 

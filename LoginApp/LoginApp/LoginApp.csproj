@@ -2,29 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-	  <SpaRoot>Web\</SpaRoot>
 	  <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
 	  <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+	  <IsPackable>false</IsPackable>
+	  <SpaRoot>Web\</SpaRoot>
 	  <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <WarningLevel>2</WarningLevel>
+    <WarningLevel>5</WarningLevel>
   </PropertyGroup>
-
-	<ItemGroup>
-		<!-- Don't publish the SPA source files, but do show them in the project files list -->
-		<Content Remove="$(SpaRoot)**" />
-		<None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Content Remove="web.config" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Include="web.config" />
-	</ItemGroup>
 
 
 	<ItemGroup>
@@ -38,6 +25,27 @@
     </PackageReference>
   </ItemGroup>
 
+	<ItemGroup>
+		<!-- Don't publish the SPA source files, but do show them in the project files list -->
+		<Content Remove="$(SpaRoot)**" />
+		<None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Infraestructura\Migrations\20220629145607_MigracionInicial.cs" />
+	  <Compile Remove="Infraestructura\Migrations\20220629145607_MigracionInicial.Designer.cs" />
+	  <Compile Remove="Infraestructura\Migrations\20220708161110_AjusteMensajeExcepciones.cs" />
+	  <Compile Remove="Infraestructura\Migrations\20220708161110_AjusteMensajeExcepciones.Designer.cs" />
+	  <Compile Remove="Migrations\20220714180124_MigracionInicial.cs" />
+	  <Compile Remove="Migrations\20220714180124_MigracionInicial.Designer.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Infraestructura\Migrations\" />
+		<Folder Include="Migrations\" />
+		<Folder Include="Web\" />
+	</ItemGroup>
+	
 	<Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
 		<!-- Ensure Node.js is installed -->
 		<Exec Command="node --version" ContinueOnError="true">

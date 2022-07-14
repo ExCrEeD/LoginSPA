@@ -23,7 +23,7 @@ namespace LoginApp.Infraestructura.Repositorio
 
         public void ActualizarExepcionAutenticacionEmail(string email, string excepcion)
         {
-            var cuenta = dbContext.IniciosDeSesion.Where(x => x.Email == email).FirstOrDefault();
+            var cuenta = dbContext.CuentasCorreo.Where(x => x.Email == email).FirstOrDefault();
             if (cuenta != null)
             {
                 cuenta.ExcepcionAutenticacion = excepcion;
@@ -33,17 +33,17 @@ namespace LoginApp.Infraestructura.Repositorio
 
         public void AlmacenarToken(DTOLoginXoauth2 loginXoauth2)
         {
-            var inicioDeSesion = dbContext.IniciosDeSesion.FirstOrDefault(f=>f.Email == loginXoauth2.Email);
+            var inicioDeSesion = dbContext.CuentasCorreo.FirstOrDefault(f=>f.Email == loginXoauth2.Email);
 
             if (inicioDeSesion is null)
-                dbContext.IniciosDeSesion.Add(DeDTOAPersistencia(loginXoauth2));
+                dbContext.CuentasCorreo.Add(DeDTOAPersistencia(loginXoauth2));
             else
                 dbContext.Entry(inicioDeSesion).CurrentValues.SetValues(DeDTOAPersistencia(loginXoauth2));
 
             dbContext.SaveChanges();
 
-            static IniciosDeSesion DeDTOAPersistencia(DTOLoginXoauth2 login) 
-             => new IniciosDeSesion
+            static CuentasCorreo DeDTOAPersistencia(DTOLoginXoauth2 login) 
+             => new CuentasCorreo
                 {
                     AccesToken = login.AccesToken,
                     Email = login.Email,
@@ -57,14 +57,14 @@ namespace LoginApp.Infraestructura.Repositorio
 
         public DTOLoginXoauth2 ConsultarToken(string email)
         {
-            var cuenta = dbContext.IniciosDeSesion.Where(w => w.Email == email).FirstOrDefault();
+            var cuenta = dbContext.CuentasCorreo.Where(w => w.Email == email).FirstOrDefault();
             if (cuenta != null)
                 if (!string.IsNullOrEmpty(cuenta.ExcepcionAutenticacion))
                     throw new Exception(cuenta.ExcepcionAutenticacion);
             
             return cuenta is null? null : DePersistenciaADominio(cuenta);
 
-            static DTOLoginXoauth2 DePersistenciaADominio(IniciosDeSesion s) => new DTOLoginXoauth2
+            static DTOLoginXoauth2 DePersistenciaADominio(CuentasCorreo s) => new DTOLoginXoauth2
             {
                 AccesToken = s.AccesToken,
                 Email = s.Email,
@@ -75,7 +75,7 @@ namespace LoginApp.Infraestructura.Repositorio
 
         }
 
-        public IEnumerable<string> ObtenerCuentasDeCorreo() => dbContext.IniciosDeSesion.Select(s => s.Email).ToList();
+        public IEnumerable<string> ObtenerCuentasDeCorreo() => dbContext.CuentasCorreo.Select(s => s.Email).ToList();
        
 
 

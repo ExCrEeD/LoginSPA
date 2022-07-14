@@ -1,5 +1,5 @@
-const apiUrlBase =  "https://localhost:44332/";
-
+const apiUrlBase =  window.location.origin.includes("http://localhost:22500")? "../api/":"../aplicacion/api/";
+export const apiAuhtorizationHeader = "BA7P?j5}&X";
 
 export const UrlApiLogin = {
     ObtenerConfiguracionAPP : apiUrlBase + "login/ObtenerConfiguracionAPP",

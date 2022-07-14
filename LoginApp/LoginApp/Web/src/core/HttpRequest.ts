@@ -1,16 +1,12 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-//import { NotificationManager } from "react-notifications";
+import { NotificationManager } from "react-notifications";
+import { apiAuhtorizationHeader } from "constantes/ApiUrlLogin";
 
 
 class HttpRequest {
     constructor() {
-        // if (environment.enModoDesarrollo === false) {
-        //     let myWindow: any = window;
-        //     if (myWindow.parent.getToken) {
-        //         let token = myWindow.parent.getToken();
-        //         axios.defaults.headers.common["Authorization"] = token;
-        //     }
-        // }
+        axios.defaults.headers.common["Authorization"] = apiAuhtorizationHeader;
+       
     }
 
     private IdDivScreenLoading: string = "DivScreenLoadingHttpRequest";
@@ -85,7 +81,7 @@ class HttpRequest {
                         mensaje = error.response?.data.ExceptionMessage;
                     }
                 }
-                //NotificationManager.error(mensaje, null, 10000);
+                NotificationManager.error(mensaje, null, 10000);
                 return Promise.reject(error.response?.data);
             })
             .finally(() => {
